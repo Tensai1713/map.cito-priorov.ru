@@ -361,7 +361,7 @@ function getMonthWithDeclension(monthIndex) {
       10: "октября",11: "ноября", 12: "декабря"
   };
 
-  return monthGenitive[monthIndex]; // Возвращаем название месяца в родительном падеже
+  return monthGenitive[monthIndex];
 }
 
 function updateTime() {
@@ -379,7 +379,7 @@ function updateTime() {
   
   let dayOfWeek = daysOfWeek[today.getDay()];
   let day = today.getDate();
-  let monthIndex = today.getMonth() + 1; // Месяцы начинаются с нуля
+  let monthIndex = today.getMonth() + 1;
   
   let monthDeclension = getMonthWithDeclension(monthIndex);
   
