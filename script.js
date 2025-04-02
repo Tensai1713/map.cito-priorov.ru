@@ -122,6 +122,14 @@ const routeCoords = {
         [55.819320, 37.529768],
         [55.819400, 37.529747],
     ],
+    radial: [
+      [55.819445, 37.528900],
+      [55.819440, 37.528753],
+      [55.819230, 37.528820],
+      [55.819340, 37.529995],
+      [55.819220, 37.530053],
+      [55.819213, 37.530166],
+  ],
 };
 
 let isAnimating = false;
@@ -147,7 +155,7 @@ function interpolatePoints(points, steps) {
 for (let key in routeCoords) {
     routes[key] = {
         coords: interpolatePoints(routeCoords[key], 20),
-        polyline: L.polyline([], { color: 'blue', opacity: 0.5 }).addTo(map)
+        polyline: L.polyline([], { color: '#2b86cd' }).addTo(map)
     };
 }
 
@@ -176,54 +184,64 @@ const startMarker = L.marker(routeCoords.chief[0], { icon: startMarkerIcon })
     .bindPopup(customPopupContent)
     .openPopup();
 
-function animateRoute(routeKey) {
-    if (isAnimating) return;
-    isAnimating = true;
+    let isRouteBuilding = false;
+    let isInactivityScreenActive = false;
 
-    map.setView(initialFocus, initialZoom);
+    function animateRoute(routeKey) {
+      if (isRouteBuilding) return;
+      isRouteBuilding = true;
+      
+      const buttonsContainer = document.querySelector('#route-buttons');
+      buttonsContainer.classList.add('hidden-by-route'); // Скрываем из-за маршрута
+      
+      // Остальная логика анимации маршрута...
+      map.setView(initialFocus, initialZoom);
+  
+      for (let key in routes) {
+          routes[key].polyline.setLatLngs([]);
+      }
+  
+      if (endMarker) {
+          map.removeLayer(endMarker);
+          endMarker = null;
+      }
+  
+      startMarker.closePopup();
+  
+      routes[routeKey].polyline.setLatLngs([]);
+      let index = 0;
+      const speed = 20;
+  
+      const interval = setInterval(() => {
+          if (index < routes[routeKey].coords.length) {
+              routes[routeKey].polyline.addLatLng(routes[routeKey].coords[index]);
+              index++;
+          } else {
+              clearInterval(interval);
+              isRouteBuilding = false;
+  
+              const endCoords = routes[routeKey].coords[routes[routeKey].coords.length - 1];
+              endMarker = L.marker(endCoords, { icon: endMarkerIcon })
+                  .addTo(map).openPopup();
+  
+              setTimeout(() => {
+                  map.setView(endCoords, map.getZoom());
+              }, 100);
+  
+              startMarker.openPopup();
+              
+              // Показываем панель только если:
+              // 1. Не активно построение маршрута
+              // 2. Не активен экран ожидания
+              if (!isRouteBuilding && !isInactivityScreenActive) {
+                  buttonsContainer.classList.remove('hidden-by-route');
+                  buttonsContainer.classList.remove('hidden-by-inactivity');
+              }
+          }
+      }, speed);
+  }
 
-    for (let key in routes) {
-        routes[key].polyline.setLatLngs([]);
-    }
-
-    if (endMarker) {
-        map.removeLayer(endMarker);
-        endMarker = null;
-    }
-
-    const buttonsContainer = document.querySelector('#route-buttons');
-    buttonsContainer.classList.add('hidden');
-
-    startMarker.closePopup();
-
-    routes[routeKey].polyline.setLatLngs([]);
-    let index = 0;
-    const speed = 20;
-
-    const interval = setInterval(() => {
-        if (index < routes[routeKey].coords.length) {
-            routes[routeKey].polyline.addLatLng(routes[routeKey].coords[index]);
-            index++;
-        } else {
-            clearInterval(interval);
-
-            const endCoords = routes[routeKey].coords[routes[routeKey].coords.length - 1];
-
-            endMarker = L.marker(endCoords, { icon: endMarkerIcon })
-                .addTo(map).openPopup();
-
-            setTimeout(() => {
-                map.setView(endCoords, map.getZoom());
-            }, 100);
-
-            startMarker.openPopup();
-            buttonsContainer.classList.remove('hidden');
-            isAnimating = false;
-        }
-    }, speed);
-}
-
-function resetMap() {
+  function resetMap() {
     if (endMarker) {
         map.removeLayer(endMarker);
         endMarker = null;
@@ -235,20 +253,45 @@ function resetMap() {
 
     startMarker.openPopup();
     map.setView(initialFocus, initialZoom);
+    
+    // Восстанавливаем видимость панели если:
+    // 1. Не активно построение маршрута
+    // 2. Не активен экран ожидания
+    if (!isRouteBuilding && !isInactivityScreenActive) {
+        document.querySelector('.route-buttons').classList.remove('hidden-by-route');
+        document.querySelector('.route-buttons').classList.remove('hidden-by-inactivity');
+    }
 }
 
 let inactivityTimer = null;
 let hideCount = 0; 
+
 function showInactivityScreen() {
-    document.getElementById('inactivity-screen').classList.remove('hidden');
-    hideCount++;
-    document.querySelector('.counter').textContent = `${hideCount}`;
-    hideAllSections(); 
-    resetMap();
+  isInactivityScreenActive = true;
+  const inactivityScreen = document.getElementById('inactivity-screen');
+  inactivityScreen.classList.remove('hidden');
+  
+  const buttonsContainer = document.querySelector('#route-buttons');
+  buttonsContainer.classList.add('hidden-by-inactivity'); // Скрываем из-за экрана ожидания
+  
+  hideCount++;
+  document.querySelector('.counter').textContent = `${hideCount}`;
+  hideAllSections(); 
+  resetMap();
 }
 
 function hideInactivityScreen() {
-    document.getElementById('inactivity-screen').classList.add('hidden');  
+  isInactivityScreenActive = false;
+  const inactivityScreen = document.getElementById('inactivity-screen');
+  inactivityScreen.classList.add('hidden');
+  
+  const buttonsContainer = document.querySelector('#route-buttons');
+  buttonsContainer.classList.remove('hidden-by-inactivity');
+  
+  // Если идет построение маршрута, не показываем панель
+  if (isRouteBuilding) {
+      buttonsContainer.classList.add('hidden-by-route');
+  }
 }
 
 function resetInactivityTimer() {
@@ -289,7 +332,9 @@ document.querySelector("#toggleButton").addEventListener("click", function() {
 
 
 function hideAllSections() {
-  hideEducationContent(); 
+  document.querySelectorAll('.location-content, .education-content').forEach(el => {
+    el.classList.remove('active');
+  });
   hideInfo(); 
 }
 
@@ -322,23 +367,86 @@ document.addEventListener('click', function(event) {
     }
 });
 
-
-document.querySelector('#education-info').addEventListener('click', function() {
-  const educationContent = document.querySelector('.education-content');
-  const isActive = educationContent.classList.contains('active');
-
-  if (isActive) {
-      educationContent.classList.remove('active');
-  } else {
-      educationContent.classList.add('active');
-  }
+function setupLocationButtons() {
+  const locationButtons = document.querySelectorAll('.location > button[id$="-info"]');
   
-  hideInfo();
+  locationButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const content = this.nextElementSibling;
+      const isActive = content.classList.contains('active');
+      const routeButton = content.querySelector('.location__btn');
+      
+      // Закрываем все открытые блоки
+      document.querySelectorAll('.location-content.active, .education-content.active').forEach(openContent => {
+        if (openContent !== content) {
+          openContent.classList.remove('active');
+          const btn = openContent.querySelector('.location__btn');
+          if (btn) btn.classList.remove('animated');
+        }
+      });
+      
+      // Переключаем текущий блок
+      content.classList.toggle('active');
+      
+      // Управляем анимацией
+      if (routeButton) {
+        if (content.classList.contains('active')) {
+          // Небольшая задержка перед запуском анимации
+          setTimeout(() => {
+            routeButton.classList.add('animated');
+          }, 300);
+        } else {
+          routeButton.classList.remove('animated');
+        }
+      }
+      
+      hideInfo();
+    });
+  });
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+  setupLocationButtons();
+  
+  // Обработчик для education кнопки
+  document.querySelector('#education-info').addEventListener('click', function() {
+    const educationContent = document.querySelector('.education-content');
+    const isActive = educationContent.classList.contains('active');
+    const eduRouteBtn = educationContent.querySelector('.education__btn');
+
+    // Закрываем другие блоки
+    document.querySelectorAll('.location-content.active').forEach(el => {
+      el.classList.remove('active');
+      const btn = el.querySelector('.location__btn');
+      if (btn) btn.classList.remove('animated');
+    });
+
+    if (isActive) {
+      educationContent.classList.remove('active');
+      if (eduRouteBtn) eduRouteBtn.classList.remove('animated');
+    } else {
+      educationContent.classList.add('active');
+      setTimeout(() => {
+        if (eduRouteBtn) eduRouteBtn.classList.add('animated');
+      }, 300);
+    }
+    
+    hideInfo();
+  });
 });
+
+// Обновленная функция hideAllSections
+function hideAllSections() {
+  document.querySelectorAll('.location-content, .education-content').forEach(el => {
+    el.classList.remove('active');
+  });
+  hideInfo();
+}
 
 // кнопка для разработки нового маршрута
 document.querySelector('#showRouteButton').addEventListener('click', () => {
-  const routeKey = 'education'; 
+  const routeKey = 'button'; 
   resetMap(); 
   
   routes[routeKey].polyline.setLatLngs(routes[routeKey].coords);
@@ -394,8 +502,9 @@ setInterval(updateTime, 1000);
 
 document.querySelector('#chief').addEventListener('click', () => { animateRoute('chief'); hideInfo(); hideAllSections(); });
 document.querySelector('#hospitalizationWaitingRoom').addEventListener('click', () => { animateRoute('hospitalizationWaitingRoom'); hideInfo(); hideAllSections(); });
-document.querySelector('#AdultСlinic').addEventListener('click', () => { animateRoute('AdultСlinic'); hideInfo(); hideAllSections(); });
+document.querySelector('#adultClinic').addEventListener('click', () => { animateRoute('AdultСlinic'); hideInfo(); hideAllSections(); });
 document.querySelector('#adultReceptionDepartment').addEventListener('click', () => { animateRoute('adultReceptionDepartment'); hideInfo(); hideAllSections(); });
 document.querySelector('#mainBuilding').addEventListener('click', () => { animateRoute('mainBuilding'); hideInfo(); hideAllSections(); });
 document.querySelector('#childrenDepartment').addEventListener('click', () => { animateRoute('childrenDepartment'); hideInfo(); hideAllSections(); });
-document.querySelector('#education').addEventListener('click', () => { animateRoute('education'); hideInfo(); hideAllSections(); });
+document.querySelector('#education').addEventListener('click', () => { animateRoute('education'); hideInfo(); hideAllSections(); }); 
+document.querySelector('#radial').addEventListener('click', () => { animateRoute('radial'); hideInfo(); hideAllSections(); });

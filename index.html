@@ -42,7 +42,7 @@
       <p class="info-text">Если вам требуется помощь дежурного травматолога, воспользуйтесь кнопкой справа от экрана.</p>
       <img src="img/error.svg" alt="Toggle Icon" class="svg__eror-icon" />
       <p class="info-text">Нашли ошибку? Cообщите нам.</p>
-      <p class="info-text">it@cito-priorov.ru.</p>
+      <p class="info-text">it@cito-priorov.ru</p>
 
     </div>
   </div>
@@ -50,21 +50,130 @@
   
 
 
-    <div class="route-buttons" id="route-buttons">
-    
-      
+    <div class="route-buttons hidden-by-inactivity" id="route-buttons">
       <button class="btn none" id="showRouteButton">Показать тестовый маршрут</button>
-        <button class="btn " id="chief"><div class="btn__text"><p>Дирекция /<br>Отдел главного врача</p><p class="korp">Корпус 6, подъезд 3</p></div></button>
-        <button class="btn " id="AdultСlinic"><div class="btn__text"><p>Взрослая поликлиника</p><p class="korp">Корпус 1</p></div></button>
-        <button class="btn " id="hospitalizationWaitingRoom"><div class="btn__text"><p>Зал ожидания госпитализации</p><p class="korp">Корпус 5</p></div></button>
-        <button class="btn " id="adultReceptionDepartment"><div class="btn__text"><p>Взрослое приемное отделение</p><p class="korp">Корпус 6, подъезд 1</p></div></button>
-        <button class="btn none" id="mainBuilding"><div class="btn__text"><p>Главный корпус</p><p class="korp">Корпус 6, подъезд 2</p></div></button>
-        <button class="btn " id="childrenDepartment"><div class="btn__text"><p>Детское приемное отделение (поликлиника)</p><p class="korp">Корпус 7, подъезд 9</p></div></button>
-        <div class="education ">
+        <!-- Взрослая поликлиника -->
+      <div class="location">
+        <button class="btn" id="AdultClinic-info">
+          <div class="btn__text">
+            <p>Взрослая поликлиника</p>
+            <p class="korp">Корпус 1</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/AdultСlinic.jpg" alt="Взрослая поликлиника">
+          <p>Отделения:</p>
+          <p><b>13</b> отд.</p>
+          <button class="btn location__btn" id="adultClinic">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Зал ожидания госпитализации -->
+      <div class="location">
+        <button class="btn" id="hospitalizationWaitingRoom-info">
+          <div class="btn__text">
+            <p>Зал ожидания госпитализации</p>
+            <p class="korp">Корпус 5</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/hospitalizationWaitingRoom.jpg" alt="Зал ожидания">
+          <button class="btn location__btn" id="hospitalizationWaitingRoom">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Взрослое приемное отделение -->
+      <div class="location">
+        <button class="btn" id="adultReceptionDepartment-info">
+          <div class="btn__text">
+            <p>Взрослое приемное отделение</p>
+            <p class="korp">Корпус 6, подъезд 1</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/adultReceptionDepartment.jpg" alt="Приемное отделение">
+          <button class="btn location__btn" id="adultReceptionDepartment">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Главный корпус -->
+      <div class="location">
+        <button class="btn" id="mainBuilding-info">
+          <div class="btn__text">
+            <p>Главный корпус</p>
+            <p class="korp">Корпус 6, подъезд 2</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/mainBuilding.jpg" alt="Главный корпус">
+          <p>Отделения:</p>
+          <ul class="location-list">
+            <li class="location-list-otd1"><b>1</b> отд.</li>
+            <li class="location-list-otd2"><b>2</b> отд.</li>
+            <li class="location-list-otd3"><b>3</b> отд.</li>
+            <li class="location-list-otd5"><b>5</b> отд.</li>
+            <li class="location-list-otd6"><b>6</b> отд.</li>
+            <li class="location-list-otd7"><b>7</b> отд.</li>
+            <li class="location-list-otd8"><b>8</b> отд.</li>
+          </ul>
+          <button class="btn location__btn" id="mainBuilding">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Дирекция -->
+      <div class="location">
+        <button class="btn" id="chief-info">
+          <div class="btn__text">
+            <p>Дирекция /<br>Отдел главного врача</p>
+            <p class="korp">Корпус 6, подъезд 3</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/chief.jpg" alt="Дирекция">
+          <button class="btn location__btn" id="chief">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Детское отделение -->
+      <div class="location">
+        <button class="btn" id="childrenDepartment-info">
+          <div class="btn__text">
+            <p>Детское приемное отделение (поликлиника)</p>
+            <p class="korp">Корпус 7, подъезд 9</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/childrenDepartment.jpg" alt="Детское отделение">
+          <p>Отделения:</p>
+          <ul class="location-list-children">
+            <li class="location-list-otd9"><b>9</b> отд.</li>
+            <li class="location-list-otd10"><b>10</b> отд.</li>
+            <li class="location-list-otd11"><b>11</b> отд.</li>
+            <li class="location-list-otd15"><b>15</b> отд.</li>
+          </ul>
+          <button class="btn location__btn" id="childrenDepartment">Построить маршрут</button>
+        </div>
+      </div>
+    
+      <!-- Лучевая диагностика -->
+      <div class="location">
+        <button class="btn" id="radial-info">
+          <div class="btn__text">
+            <p>Лучевая диагностика</p>
+            <p class="korp">Корпус 9, подъезд 8</p>
+          </div>
+        </button>
+        <div class="location-content hidden">
+          <img src="./img/enters/radial.jpg" alt="Лучевая диагностика">
+          <button class="btn location__btn" id="radial">Построить маршрут</button>
+        </div>
+      </div>
+
+      <div class="education ">
           <button class="btn" id="education-info"><div class="btn__text"><p>Управление по образовательной деятельности</p><p class="korp">Корпус 10, подъезд 7</p></div></button>
           <div class="education-content hidden">
             <div class="qr qr-education"><img style="width: 150px;" src="./img/qr-education.png" alt=""></div>
-            <p class="education-info__text"><b>Ординатура. Аспирантура. ДПО</b>. Очное обучение, стажировки на рабочем месте, симуляционные тренинги и кадаверные курсы.</p>
+            <p class="info__text"><b>Ординатура. Аспирантура. ДПО</b>. Очное обучение, стажировки на рабочем месте, симуляционные тренинги и кадаверные курсы.</p>
             <div class="education-info__phone-wrap">
               <img style="width: 30px;" src="./img/education-phone.png" alt="">
               <p>+7 (499) 153-12-42</p>
@@ -80,9 +189,11 @@
               <p>г. Москва, ул. Приорова, д. 10, 
                 подъезд 7, 2 этаж, кабинет 211</p>
             </div>
-            <button class=" btn btn-test" id="education">Построить маршрут</button>
+            <button class=" btn education__btn" id="education">Построить маршрут</button>
           </div>
         </div>
+    </div>
+        
 
     </div>
     <div id="map"></div>

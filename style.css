@@ -4,6 +4,12 @@ body {
   overflow: hidden;
 }
 
+ul li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 #map {
   height: 100vh;
 }
@@ -33,13 +39,14 @@ ul {
   background-color: #2b86cd;
   color: #fff;
   font-size: 25px;
-  max-width: 300px;
-  min-height: 70px;
+  width: 300px;
+  max-height: 300px;
+  z-index: 10;
 }
 
-.btn-test {
+.education__btn {
   font-size: 20px;
-  max-width: 150px;
+  max-width: 250px;
   min-height: 70px;
   margin-bottom: 10px;
 }
@@ -71,7 +78,6 @@ ul {
   left: 0;
   bottom: 0;
   opacity: 0;
-  
 }
 .svg__eror-icon.active {
   transition: opacity 0.8s;
@@ -169,6 +175,33 @@ ul {
   flex-direction: column;
   gap: 20px;
   transition: transform 0.5s ease; 
+  overflow-y: auto;
+  height: 97vh;
+  padding-right: 3px;
+  border-radius: 10px;
+  transform: translateX(110%); /* По умолчанию панель скрыта */
+  transition: transform 0.5s ease;
+  transform: translateX(0);
+}
+
+.route-buttons.hidden-by-inactivity,
+.route-buttons.hidden-by-route {
+    transform: translateX(110%);
+}
+
+
+
+.route-buttons::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.route-buttons::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+.route-buttons::-webkit-scrollbar-thumb {
+  background: #62a8dd; 
+  border-radius: 3px; 
 }
 
 .route-buttons.hidden {
@@ -301,6 +334,7 @@ ul {
   height: 100%;
   object-fit: cover; 
   z-index: -1;
+  opacity: 0.8;
 }
 
 .message {
@@ -319,11 +353,14 @@ ul {
   color: #808283;
 }
 
+
+
+
 .education-content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-out;
-  background-color: #ffffff88;
+  background-color: #2b87cd49;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -333,15 +370,17 @@ ul {
   font-size: 20px;
   color: #0D4068;
   gap: 15px;
+  margin-top: -10px;
 }
 
 
 
 .education-content.active {
   max-height: 1000px;
+  
 }
 
-.education-info__text {
+.info__text {
   max-width: 250px;
   text-align: center;
   
@@ -384,6 +423,7 @@ ul {
 .btn__text {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 10px;
 }
 
@@ -391,6 +431,181 @@ ul {
   color: #494949;
 }
 
+
+.location-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+  background-color: #2b87cd49;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: -10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  width: 300px;
+  font-size: 20px;
+  color: #0D4068;
+}
+
+.location-content.active {
+  max-height: 1000px; 
+  z-index: 9;
+}
+
+
+
+
+
+
+
+
+/* Стили для изображения внутри контента */
+.location-content img {
+  width: 260px;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  opacity: 1; /* Убираем анимацию opacity для изображения */
+  transition: none; /* Отключаем отдельные transition для img */
+  margin-top: 20px;
+  box-shadow: 0 0 15 rgb(255, 255, 255);
+}
+
+/* Стили для кнопки "Построить маршрут" */
+.location__btn {
+  font-size: 20px;
+  max-width: 250px;
+  min-height: 70px;
+  margin-bottom: 10px;
+  width: 100%;
+  animation: none;
+  border: 1px solid #fff;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255);
+}
+
+.location-content.active .location__btn {
+  animation: pulseGlow 2s infinite ease-in-out;
+  will-change: transform, box-shadow; 
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.6)
+    inset 0 0 15px rgba(255, 255, 255);
+    
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 1)
+    inset 0 0 15px rgba(255, 255, 255);
+  }
+  75% {
+    opacity: 0.9; 
+  }
+}
+
+@keyframes smoothPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes gentleGlow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.location__btn.animated {
+  animation: 
+    smoothPulse 3s ease-in-out infinite,
+    gentleGlow 3s ease-in-out infinite;
+  transform: translateZ(0); /* Аппаратное ускорение */
+  backface-visibility: hidden; /* Улучшение рендеринга */
+}
+
+/* Контейнер для локации */
+.location {
+  position: relative;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.location-list {
+  display: grid;
+  gap: 10px;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "otd1 otd2"
+    "otd3 otd5"
+    "otd6 otd7"
+    "otd8 ."
+    ;
+}
+
+.location-list-otd1 {
+  grid-area: otd1;
+}
+.location-list-otd2 {
+  grid-area: otd2;
+}
+.location-list-otd3 {
+  grid-area: otd3;
+}
+.location-list-otd5 {
+  grid-area: otd5;
+}
+.location-list-otd6 {
+  grid-area: otd6;
+}
+.location-list-otd7 {
+  grid-area: otd7;
+}
+.location-list-otd8 {
+  grid-area: otd8;
+}
+
+.location-list-children {
+  justify-self: center;
+  display: grid;
+  gap: 10px;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "otd9 otd10"
+    "otd11 otd15"
+    ;
+}
+
+.location-list-otd9 {
+  grid-area: otd9;
+}
+.location-list-otd10 {
+  grid-area: otd10;
+}
+.location-list-otd11 {
+  grid-area: otd11;
+}
+.location-list-otd15 {
+  grid-area: otd15;
+}
 
 @media (max-width:2048px) {
   .date-time {
